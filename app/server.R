@@ -1,168 +1,186 @@
 library(shiny)
+library(dplyr)
+library(ggplot2)
+library(leaflet)
+library(rgdal)
+library(data.table)
 library(choroplethr)
 library(choroplethrZip)
-library(dplyr)
-library(leaflet)
-library(maps)
-library(rgdal)
 
-## Define Manhattan's neighborhood
-man.nbhd=c("all neighborhoods", "Central Harlem", 
-           "Chelsea and Clinton",
-           "East Harlem", 
-           "Gramercy Park and Murray Hill",
-           "Greenwich Village and Soho", 
-           "Lower Manhattan",
-           "Lower East Side", 
-           "Upper East Side", 
-           "Upper West Side",
-           "Inwood and Washington Heights")
-zip.nbhd=as.list(1:length(man.nbhd))
-zip.nbhd[[1]]=as.character(c(10026, 10027, 10030, 10037, 10039))
-zip.nbhd[[2]]=as.character(c(10001, 10011, 10018, 10019, 10020))
-zip.nbhd[[3]]=as.character(c(10036, 10029, 10035))
-zip.nbhd[[4]]=as.character(c(10010, 10016, 10017, 10022))
-zip.nbhd[[5]]=as.character(c(10012, 10013, 10014))
-zip.nbhd[[6]]=as.character(c(10004, 10005, 10006, 10007, 10038, 10280))
-zip.nbhd[[7]]=as.character(c(10002, 10003, 10009))
-zip.nbhd[[8]]=as.character(c(10021, 10028, 10044, 10065, 10075, 10128))
-zip.nbhd[[9]]=as.character(c(10023, 10024, 10025))
-zip.nbhd[[10]]=as.character(c(10031, 10032, 10033, 10034, 10040))
+mydata <- fread("C:/Users/AshChiVoo/Documents/GitHub/fall2019-proj2--sec1-grp1/data/combineddata.csv",
+                stringsAsFactors = FALSE)
+mydata$health <- recode(mydata$health,"GOOD"="Good","POOR"="Poor", "FAIR"="Fair","DEAD"="Dead")
 
-## Load housing data
-load("../output/count.RData")
-load("../output/mh2009use.RData")
+
+data("zip.regions")
+valid_region <- zip.regions$region
 
 # Define server logic required to draw a histogram
-shinyServer(function(input, output) {
-  
-  ## Neighborhood name
-  output$text = renderText({"Selected:"})
-  output$text1 = renderText({
-      paste("{ ", man.nbhd[as.numeric(input$nbhd)+1], " }")
+shinyServer(function(input, output, session) {
+   
+  dfInput <- reactive({
+    mydata %>%  
+      filter(year == input$RY) %>%
+      filter(tree_dbh > input$diameter[1]) %>%
+      filter(tree_dbh < input$diameter[2]) %>%
+      group_by(postcode) %>% 
+      count(health) %>%
+      ungroup() %>% 
+      filter(health == input$healthp) %>%
+      mutate(region = as.character(postcode), value = n) %>% 
+      filter(region %in% valid_region) %>% 
+      select(region, value)
   })
   
-  ## Panel 1: summary plots of time trends, 
-  ##          unit price and full price of sales. 
   
-  output$distPlot <- renderPlot({
-    
-    ## First filter data for selected neighborhood
-    mh2009.sel=mh2009.use
-    if(input$nbhd>0){
-      mh2009.sel=mh2009.use%>%
-                  filter(region %in% zip.nbhd[[as.numeric(input$nbhd)]])
-    }
-    
-    ## Monthly counts
-    month.v=as.vector(table(mh2009.sel$sale.month))
-    
-    ## Price: unit (per sq. ft.) and full
-    type.price=data.frame(bldg.type=c("10", "13", "25", "28"))
-    type.price.sel=mh2009.sel%>%
-                group_by(bldg.type)%>%
-                summarise(
-                  price.mean=mean(sale.price, na.rm=T),
-                  price.median=median(sale.price, na.rm=T),
-                  unit.mean=mean(unit.price, na.rm=T),
-                  unit.median=median(unit.price, na.rm=T),
-                  sale.n=n()
-                )
-    type.price=left_join(type.price, type.price.sel, by="bldg.type")
-    
-    ## Making the plots
-    layout(matrix(c(1,1,1,1,2,2,3,3,2,2,3,3), 3, 4, byrow=T))
-    par(cex.axis=1.3, cex.lab=1.5, 
-        font.axis=2, font.lab=2, col.axis="dark gray", bty="n")
-    
-    ### Sales monthly counts
-    plot(1:12, month.v, xlab="Months", ylab="Total sales", 
-         type="b", pch=21, col="black", bg="red", 
-         cex=2, lwd=2, ylim=c(0, max(month.v,na.rm=T)*1.05))
-    
-    ### Price per square foot
-    plot(c(0, max(type.price[,c(4,5)], na.rm=T)), 
-         c(0,5), 
-         xlab="Price per square foot", ylab="", 
-         bty="l", type="n")
-    text(rep(0, 4), 1:4+0.5, paste(c("coops", "condos", "luxury hotels", "comm. condos"), 
-                                  type.price$sale.n, sep=": "), adj=0, cex=1.5)
-    points(type.price$unit.mean, 1:nrow(type.price), pch=16, col=2, cex=2)
-    points(type.price$unit.median, 1:nrow(type.price),  pch=16, col=4, cex=2)
-    segments(type.price$unit.mean, 1:nrow(type.price), 
-              type.price$unit.median, 1:nrow(type.price),
-             lwd=2)    
-    
-    ### full price
-    plot(c(0, max(type.price[,-1], na.rm=T)), 
-         c(0,5), 
-         xlab="Sales Price", ylab="", 
-         bty="l", type="n")
-    text(rep(0, 4), 1:4+0.5, paste(c("coops", "condos", "luxury hotels", "comm. condos"), 
-                                   type.price$sale.n, sep=": "), adj=0, cex=1.5)
-    points(type.price$price.mean, 1:nrow(type.price), pch=16, col=2, cex=2)
-    points(type.price$price.median, 1:nrow(type.price),  pch=16, col=4, cex=2)
-    segments(type.price$price.mean, 1:nrow(type.price), 
-             type.price$price.median, 1:nrow(type.price),
-             lwd=2)    
-  })
   
-  ## Panel 2: map of sales distribution
-  output$distPlot1 <- renderPlot({
-    count.df.sel=count.df
-    if(input$nbhd>0){
-      count.df.sel=count.df%>%
-        filter(region %in% zip.nbhd[[as.numeric(input$nbhd)]])
-    }
-    # make the map for selected neighhoods
-    
-    zip_choropleth(count.df.sel,
-                   title       = "2009 Manhattan housing sales",
-                   legend      = "Number of sales",
-                   county_zoom = 36061)
-  })
-  
-  ## Panel 3: leaflet
   output$map <- renderLeaflet({
-    count.df.sel=count.df
-    if(input$nbhd>0){
-      count.df.sel=count.df%>%
-        filter(region %in% zip.nbhd[[as.numeric(input$nbhd)]])
-    }
+    df_1 <- dfInput()
+    NYCzip <- readOGR("C:/Users/AshChiVoo/Documents/GitHub/fall2019-proj2--sec1-grp1/data/ZIP_CODE_040114.shp", verbose = FALSE)
+    selectZip <- subset(NYCzip, NYCzip$ZIPCODE %in% df_1$region)
+    subdat <- spTransform(selectZip, CRS("+init=epsg:4326"))
+    subdat_data <- subdat@data[,c("ZIPCODE","POPULATION")]
+    subdat.rownames <- rownames(subdat_data)
+    subdat_data$ZIPCODE <- as.character(subdat_data$ZIPCODE)
+    subdat_data <- subdat_data %>% left_join(df_1, by=c("ZIPCODE" = "region"))
+    rownames(subdat_data) <- subdat.rownames
+    subdat <- SpatialPolygonsDataFrame(subdat, data=subdat_data)
     
-    # From https://data.cityofnewyork.us/Business/Zip-Code-Boundaries/i8iw-xf4u/data
-    NYCzipcodes <- readOGR("../data/ZIP_CODE_040114.shp",
-                           #layer = "ZIP_CODE", 
-                           verbose = FALSE)
+    pal1 <- colorNumeric(palette = "Reds", domain = subdat$value)
     
-    selZip <- subset(NYCzipcodes, NYCzipcodes$ZIPCODE %in% count.df.sel$region)
+    popup1 = paste0('</strong>ZIP:<strong>', subdat$ZIPCODE, '<br></strong>Count:<strong>', subdat$value)
     
-    # ----- Transform to EPSG 4326 - WGS84 (required)
-    subdat<-spTransform(selZip, CRS("+init=epsg:4326"))
+  #  labels <- sprintf(
+  #    "Zip Code: <strong>%s</strong><br/> Count: <strong>%g<sup></sup></strong>",
+  #    as.character(subdat$ZIPCODE), subdat$value
+  #  ) %>% lapply(htmltools::HTML)
     
-    # ----- save the data slot
-    subdat_data=subdat@data[,c("ZIPCODE", "POPULATION")]
-    subdat.rownames=rownames(subdat_data)
-    subdat_data=
-      subdat_data%>%left_join(count.df, by=c("ZIPCODE" = "region"))
-    rownames(subdat_data)=subdat.rownames
-    
-    # ----- to write to geojson we need a SpatialPolygonsDataFrame
-    subdat<-SpatialPolygonsDataFrame(subdat, data=subdat_data)
-    
-    # ----- set uo color pallette https://rstudio.github.io/leaflet/colors.html
-    # Create a continuous palette function
-    pal <- colorNumeric(
-      palette = "Blues",
-      domain = subdat$POPULATION
-    )
-    
-    leaflet(subdat) %>%
-      addTiles()%>%
-      addPolygons(
-        stroke = T, weight=1,
-        fillOpacity = 0.6,
-        color = ~pal(POPULATION)
+    leaflet(subdat) %>% 
+      #addProviderTiles("CartoDB.Positron") %>%
+      addProviderTiles("Esri.WorldGrayCanvas",
+                       options = tileOptions(minZoom=9.2, maxZoom=13)) %>%
+      setView(-73.95, 40.705, zoom = 9.5) %>%
+      addPolygons(fillColor = ~pal1(subdat$value),
+                  fillOpacity = 0.7,
+                  color = "darkgrey",
+                  weight = 1.5, 
+                  #label = labels,
+                  highlightOptions = highlightOptions(color="black", opacity = 0.5,
+                                                      weight = 2, fillOpacity = 0.9,
+                                                      bringToFront = TRUE, sendToBack = TRUE),
+                  #labelOptions = labelOptions(
+                  #  style = list("font-weight" = "normal", padding = "3px 8px"),
+                  #  textsize = "12px",
+                  #  direction = "auto"),
+                  popup = popup1,
+                  
+                  group= "2015") %>%
+      addLegend(position = "bottomright",
+                pal = pal1,
+                values = ~value,
+                opacity = 0.6,
+                title = "Value"
       )
+    
+    
   })
+  
+  observeEvent(input$map1_shape_click, {
+    click <- input$map1_shape_click
+    posi <- reactive({input$map1_shape_click})
+  }
+  )
+    
+    observeEvent(input$details,{
+      if (input$details){
+        updateTabsetPanel(session, "NYCTREE", selected = "Panel2")
+      }
+      
+    })
+  
+    ######### Panel 2 plotting #########
+    
+    dfPlot <- reactive({
+      mydata %>% 
+        filter(year == input$RY2) %>% 
+        filter(postcode ==strtoi(input$zipcode))
+    })
+    
+
+    
+    output$plot1 <- renderPlot({
+      
+      df_2 <- dfPlot()
+      data <- df_2
+      
+      numberoftrees <- data.frame(table(data$spc_common))
+      numberoftrees <- numberoftrees[order(-numberoftrees$Freq),]
+      specieswant <- numberoftrees$Var1[1:12]
+      interactivedata <-  mydata[mydata$spc_common %in% specieswant,]
+      
+      
+      plot1<- ggplot(interactivedata, aes(x=reorder(spc_common,spc_common,function(x)length(x)))) + 
+        geom_bar(aes(y=(..count..), fill = health)) + 
+        scale_fill_brewer("Health Status")+
+        labs(title="TOP 12 Species Count ", x="Species", y = "Count") +
+        theme_light()+
+        theme(plot.title = element_text(size=30, face="bold", hjust = 0.5),
+              axis.text=element_text(size=16),
+              axis.title=element_text(size=20)) + 
+        coord_flip()+ 
+        scale_y_continuous(name="Count", labels = scales::comma)
+      
+      plot2<- ggplot(interactivedata, aes(x=tree_dbh)) + 
+        geom_density(data = data, aes(fill="Overall"), alpha = 0.5) + 
+        geom_density(aes(fill="Selected"), alpha = 0.5) +
+        labs(title="Tree Diameter Density Curve", x="Breast Height Diameter/inch", y = "Density")+
+        theme_light()+
+        theme(plot.title = element_text(size = 30, face = "bold", hjust = 0.5),
+              axis.text=element_text(size=16),
+              axis.title=element_text(size=20)) + 
+        xlim(0,50)+
+        scale_fill_manual(breaks=c("Overall",'Selected'),values=c('lightgrey','lightblue'), name = "Range")
+      
+      require(gridExtra)
+      
+      grid.arrange(plot1, plot2, ncol=1)
+    })
+    
+    ########## Panel 3 plotting #########
+    
+    dfPlot2 <- reactive({
+      mydata %>% 
+        filter(year == input$RY3) %>%
+        filter(postcode ==strtoi(input$zipcode)) %>%
+        filter(tree_dbh > input$diameter3[1]) %>%
+        filter(tree_dbh < input$diameter3[2])
+    })
+    
+    output$plot2 <- renderPlot({
+      
+      df_3 <- dfPlot2()
+      
+      blank_theme <- theme_minimal()+
+        theme(
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank(),
+          panel.border = element_blank(),
+          panel.grid=element_blank(),
+          axis.ticks = element_blank(),
+          plot.title=element_text(size=30, face="bold",hjust=0.5)
+        )
+      
+      ggplot(df_3, aes(x=factor(1), fill=health))+
+        geom_bar(width = 1)+ 
+        scale_fill_brewer("Health Status")+
+        coord_polar("y")+ 
+        labs(title = "Health Pie Chart")+
+        blank_theme+  
+        theme(axis.text.x=element_blank())
+      
+      
+    })
+    
+    
+    
 })

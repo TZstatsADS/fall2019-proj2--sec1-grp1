@@ -1,42 +1,86 @@
 library(shiny)
 library(leaflet)
+library(scales)
 
-# Define UI for application that draws a histogram
-shinyUI(fluidPage(
+shinyUI(
+  ########## Navbar Heading ##########
+  navbarPage("NYC Trees", id = "NYCTREE",
+             
+  ########## 1st Panel ##########           
+    tabPanel("Distribution", value = "Panel1",
+
+  ########## Map output 
+           div(class = "outer",
+               tags$style(".outer {position: fixed; top: 41px; left: 0; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
+               leafletOutput(outputId = "map", width = "100%",height = "100%")),
+  ########## Condition Section
+           absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
+                         draggable = FALSE, top = 60, left = "auto", right = 0, bottom = "auto",
+                         width = 160, height = 120,
+                         radioButtons("RY", label = "Recording Year",
+                                      choices = list("1995" , "2005", "2015"),
+                                      selected = "1995")),
+  ##########  Recording Year Section
+           absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
+                         draggable = TRUE, top = 60, left = 0, right = 40, bottom = "auto",
+                         width = 300, height= "auto",
+                         
+                         h3("Conditions"),
+                         
+                         selectInput("healthp", label = h3("Health Problem"),
+                                     choices = list("Good", "Fair","Poor", "Dead"),
+                                     selected = "GOOD"),
+                         
+                         sliderInput("diameter", label = h3("Diameter"), min = 0, max = 50, value = c(0,50)
+                         )
+                         
+                         
+           )
+   ),
   
-  # Application title
-  titlePanel("2009 Manhattan Housing Sales"),
-  
-  # Sidebar with a selector input for neighborhood
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("nbhd", label = h5("Choose a Manhattan Neighborhood"), 
-                         choices = list("all neighborhoods"=0,
-                                        "Central Harlem"=1, 
-                                        "Chelsea and Clinton"=2,
-                                        "East Harlem"=3, 
-                                        "Gramercy Park and Murray Hill"=4,
-                                        "Greenwich Village and Soho"=5, 
-                                        "Lower Manhattan"=6,
-                                        "Lower East Side"=7, 
-                                        "Upper East Side"=8, 
-                                        "Upper West Side"=9,
-                                        "Inwood and Washington Heights"=10), 
-                         selected = 0)
-      #sliderInput("p.range", label=h3("Price Range (in thousands of dollars)"),
-      #            min = 0, max = 20000, value = c(200, 10000))
-    ),
-    # Show two panels
-    mainPanel(
-      #h4(textOutput("text")),
-      h3(code(textOutput("text1"))),
-      tabsetPanel(
-        # Panel 1 has three summary plots of sales. 
-        tabPanel("Sales summary", plotOutput("distPlot")), 
-        # Panel 2 has a map display of sales' distribution
-        tabPanel("Sales map", plotOutput("distPlot1"))),
-      leafletOutput("map", width = "80%", height = "400px")
-    )
- )
-))
+   
+  ########## 2rd Panel ##########
+  tabPanel("Health Condition", value = "Panel2",
+           sidebarLayout(
+             ######### Panel
+            sidebarPanel(
+              
+                        h3("Controls"),
+              
+                        radioButtons("RY3",inline = TRUE, label = "Recording Year",
+                                      choices = list("1995" , "2005", "2015"),
+                                      selected = "1995"),
+                         
+                         textInput("zipcode", "Zip Code: \n (10001 - 10475)", "10025"),
+                         
+                         sliderInput("diameter3", label = h3("Diameter"), min = 0, max = 50, value = c(0,50))
+           ),
+            ####### plot output
+           mainPanel(
+             plotOutput(outputId = "plot2",height = "700")
+           )
+         )
+   ),
+  ########## 3rd Panel ##########
+  tabPanel("Detailed Information", value = "Panel2",
+           sidebarLayout(
+             ######## Panel
+             sidebarPanel(
+               
+               h3("Controls"),
+               
+               radioButtons("RY2",inline = TRUE, label = "Recording Year",
+                            choices = list("1995" , "2005", "2015"),
+                            selected = "1995"),
+               
+               textInput("zipcode", "Zip Code: (10001 - 10475)", "10025")
+             ),
+             ####### Plottting
+             mainPanel(
+               plotOutput(outputId = "plot1",height = "700")
+             )
+           )
+         )
+  )
+)
 
