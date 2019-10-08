@@ -7,7 +7,7 @@ library(data.table)
 library(choroplethr)
 library(choroplethrZip)
 
-mydata <- fread("C:/Users/AshChiVoo/Documents/GitHub/fall2019-proj2--sec1-grp1/data/combineddata.csv",
+mydata <- fread("../data/combineddata.csv",
                 stringsAsFactors = FALSE)
 mydata$health <- recode(mydata$health,"GOOD"="Good","POOR"="Poor", "FAIR"="Fair","DEAD"="Dead")
 
@@ -36,7 +36,7 @@ shinyServer(function(input, output, session) {
   
   output$map <- renderLeaflet({
     df_1 <- dfInput()
-    NYCzip <- readOGR("C:/Users/AshChiVoo/Documents/GitHub/fall2019-proj2--sec1-grp1/data/ZIP_CODE_040114.shp", verbose = FALSE)
+    NYCzip <- readOGR("../data/ZIP_CODE_040114.shp", verbose = FALSE)
     selectZip <- subset(NYCzip, NYCzip$ZIPCODE %in% df_1$region)
     subdat <- spTransform(selectZip, CRS("+init=epsg:4326"))
     subdat_data <- subdat@data[,c("ZIPCODE","POPULATION")]

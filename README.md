@@ -2,45 +2,43 @@
 
 ### [Project Description](doc/project2_desc.md)
 
-![screenshot](doc/screenshot2.png)
+![screenshot](doc/panel1.png)
 
-In this second project of GR5243 Applied Data Science, we develop a version 2.0 of an *Exploratory Data Analysis and Visualization* shiny app on a topic of your choice using [NYC Open Data](https://opendata.cityofnewyork.us/) or U.S. government open data released on the [data.gov](https://data.gov/) website. See [Project 2 Description](doc/project2_desc.md) for more details.  
+In this second project of GR5243 Applied Data Science, we develop a version 2.0 of an *Exploratory Data Analysis and Visualization* shiny app on a topic of your choice using [NYC Open Data](https://opendata.cityofnewyork.us/) or 
 
-The **learning goals** for this project is:
-
-- business intelligence for data science
-- study legacy codes and further development
-- data cleaning
-- data visualization
-- systems development/design life cycle
-- shiny app/shiny server
-
-*The above general statement about project 2 can be removed once you are finished with your project. It is optional.
-
-## Project Title Lorem ipsum dolor sit amet
+## Project Title: NYC Trees
 Term: Fall 2019
 
 + Team sec1-grp1
-+ **Projec title**: + Team members
++ **NYC Trees**: 
 	+ Ponkshe, Tushar tvp2110@columbia.edu
 	+ Qiu, Feng fq2150@columbia.edu
 	+ Wu, Bingquan bw2585@columbia.edu
 	+ Zhang, Shijie sz2781@columbia.edu
 	+ Zheng, Kaiyan kz2324@columbia.edu
 
-+ **Project summary**: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
++ **Dataset**: Due to the limitation of the maximum size of uploading files by Github, the dataset used in the project cannot be uploaded in the `data` file. However, the [integrated datset](data/combineddata.csv) is contained. The original datasets can be found on [NYC Open Data](https://opendata.cityofnewyork.us/). Linked bewlow:
+  + [1995 Street Tree Census](https://data.cityofnewyork.us/Environment/1995-Street-Tree-Census/7gmq-dbas)
+  + [2005 Street Tree Census](https://data.cityofnewyork.us/Environment/2005-Street-Tree-Census/ye4j-rp7z)
+  + [2015 Street Tree Census](https://data.cityofnewyork.us/Environment/2015-Street-Tree-Census-Tree-Data/pi5s-9p35) 
 
-+ **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
++ **Project summary**: This shinyapp provides a directive visualizaiton of trees distribution in New York City, as well as the basic health condition of trees and diameter of breast height in different districts. According to the dataset used in the project, most trees in New York City are planted in the Statent Island while Manhattan is the area with the least trees planted if trees in Central Park are not accounted. In each district of New York City, trees are mostly in "Good" condition with approximately 5 inch diameter at breast height.
 
++ **Contribution statement**: 
+  + Overall: Bingquan Wu provides the idea of the tree dataset and its source. Ponkshe, Tushar creates the basic frame of the app. Feng Qiu improves the detailed output and layout of the shinyapp as well as the Github page.
+  + Panel 1: Ponkshe, Tushar insert the defalut leaflet map. Shijie Zhang integrates the data to form the leafletoup map. Feng Qiu added the control panels.
+  + Panel 2&3 : Bingquan Wu plotted the tree ggplot map. Feng Qiu creates the control panels and the output layout.
+  + Presentation: Ponkshe, Tushar is the presenter.
+  
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
 
 ```
 proj/
-├── app/
-├── lib/
-├── data/
-├── doc/
-└── output/
+|-- app/
+|-- lib/
+|-- data/
+|-- doc/
+|-- output/
 ```
 
 Please see each subfolder for a README file.
