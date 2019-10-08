@@ -26,7 +26,7 @@ Term: Fall 2019
 
 + **Contribution statement**: 
   + Overall: Bingquan Wu provides the idea of the tree dataset and its source. Ponkshe, Tushar creates the basic frame of the app. Feng Qiu improves the detailed output and layout of the shinyapp as well as the Github page.
-  + Panel 1: Ponkshe, Tushar insert the defalut leaflet map. Shijie Zhang integrates the data to form the leafletoup map. Feng Qiu added the control panels.
+  + Panel 1: Shijie Zhang create the defalut leaflet map and integrates the data to form the leafletout map. Feng Qiu added the control panels.
   + Panel 2&3 : Bingquan Wu plotted the tree ggplot map. Feng Qiu creates the control panels and the output layout.
   + Presentation: Ponkshe, Tushar is the presenter.
   
