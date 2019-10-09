@@ -13,12 +13,12 @@ There are three panels in the app. Each panel can perform a very straightforward
 ![panel2](output/panel2.png)
 ![panel3](output/panel3.png)
 
-+ **Group Menbers*: 
-	+ Ponkshe, Tushar tvp2110@columbia.edu
-	+ Qiu, Feng fq2150@columbia.edu
-	+ Wu, Bingquan bw2585@columbia.edu
-	+ Zhang, Shijie sz2781@columbia.edu
-	+ Zheng, Kaiyan kz2324@columbia.edu
++ **Group Menbers**: 
+  + Ponkshe, Tushar tvp2110@columbia.edu
+  + Qiu, Feng fq2150@columbia.edu
+  + Wu, Bingquan bw2585@columbia.edu
+  + Zhang, Shijie sz2781@columbia.edu
+  + Zheng, Kaiyan kz2324@columbia.edu
 
 + **Dataset**: Due to the limitation of the maximum size of uploading files by Github, the dataset used in the project cannot be uploaded in the `data` file. However, the [integrated datset](data/combineddata.csv) is contained. The original datasets can be found on [NYC Open Data](https://opendata.cityofnewyork.us/). Linked bewlow:
   + [1995 Street Tree Census](https://data.cityofnewyork.us/Environment/1995-Street-Tree-Census/7gmq-dbas)
