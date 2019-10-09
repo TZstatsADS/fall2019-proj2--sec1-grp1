@@ -4,7 +4,11 @@
 
 The app can be accessed through this link: https://kaiyanzheng.shinyapps.io/Proj2-sec1-grp1/
 
-![screenshot](doc/panel1.png)
+
+
+![screenshot](output/panel1.png)
+![screenshot](output/panel2.png)
+![screenshot](output/panel3.png)
 
 
 In this second project of GR5243 Applied Data Science, we develop a version 2.0 of an *Exploratory Data Analysis and Visualization* shiny app on a topic of your choice using [NYC Open Data](https://opendata.cityofnewyork.us/) or 
