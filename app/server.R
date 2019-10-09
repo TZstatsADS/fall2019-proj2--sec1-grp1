@@ -6,14 +6,16 @@ library(rgdal)
 library(data.table)
 library(choroplethr)
 library(choroplethrZip)
+library(rsconnect) 
 
-mydata <- fread("../data/combineddata.csv",
-                stringsAsFactors = FALSE)
+mydata <- read.csv("combineddata.csv", stringsAsFactors = FALSE)
+#mydata <- fread("../data/combineddata.csv", stringsAsFactors = FALSE)
 mydata$health <- recode(mydata$health,"GOOD"="Good","POOR"="Poor", "FAIR"="Fair","DEAD"="Dead")
-
 
 data("zip.regions")
 valid_region <- zip.regions$region
+
+options(shiny.sanitize.errors = FALSE)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
@@ -36,7 +38,8 @@ shinyServer(function(input, output, session) {
   
   output$map <- renderLeaflet({
     df_1 <- dfInput()
-    NYCzip <- readOGR("../data/ZIP_CODE_040114.shp", verbose = FALSE)
+    #NYCzip <- readOGR("../data/ZIP_CODE_040114.shp", verbose = FALSE)
+    NYCzip <- readOGR("ZIP_CODE_040114.shp", verbose = FALSE)
     selectZip <- subset(NYCzip, NYCzip$ZIPCODE %in% df_1$region)
     subdat <- spTransform(selectZip, CRS("+init=epsg:4326"))
     subdat_data <- subdat@data[,c("ZIPCODE","POPULATION")]
