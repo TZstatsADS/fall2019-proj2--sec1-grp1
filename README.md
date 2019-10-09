@@ -2,7 +2,10 @@
 
 ### [Project Description](doc/project2_desc.md)
 
+The app can be accessed through this link: https://kaiyanzheng.shinyapps.io/Proj2-sec1-grp1/
+
 ![screenshot](doc/panel1.png)
+
 
 In this second project of GR5243 Applied Data Science, we develop a version 2.0 of an *Exploratory Data Analysis and Visualization* shiny app on a topic of your choice using [NYC Open Data](https://opendata.cityofnewyork.us/) or 
 
@@ -25,10 +28,11 @@ Term: Fall 2019
 + **Project summary**: This shinyapp provides a directive visualizaiton of trees distribution in New York City, as well as the basic health condition of trees and diameter of breast height in different districts. According to the dataset used in the project, most trees in New York City are planted in the Statent Island while Manhattan is the area with the least trees planted if trees in Central Park are not accounted. In each district of New York City, trees are mostly in "Good" condition with approximately 5 inch diameter at breast height.
 
 + **Contribution statement**: 
-  + Overall: Bingquan Wu provides the idea of the tree dataset and its source. Ponkshe, Tushar creates the basic frame of the app. Feng Qiu improves the detailed output and layout of the shinyapp as well as the Github page.
-  + Panel 1: Shijie Zhang creates the map pattern and integrates the data to form the leafletout map. Feng Qiu added the control panels.
-  + Panel 2&3 : Bingquan Wu plotted the tree ggplot map. Feng Qiu creates the control panels and the output layout.
-  + Presentation: Ponkshe, Tushar is the presenter.
+  + **Ponkshe, Tushar**: Created the basic frame of the app, presented the final app
+  + **Qiu, Feng**: Improved the detailed output and layout of the shinyapp and the Github page, added the control panels
+  + **Wu, Bingquan**:  Provided the idea of the tree dataset and its source, plotted the tree ggplot map (Panel 2 & 3)
+  + **Zhang, Shijie**: Created the map pattern and integrates the data to form the leafletout map (Panel 1)
+  + **Zheng, Kaiyan**: Deployed the app to the cloud with Shinyapps.io, improved the details in output and Github page
   
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
 
