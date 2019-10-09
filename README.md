@@ -8,7 +8,7 @@
 
 The app can be accessed through this link: https://kaiyanzheng.shinyapps.io/Proj2-sec1-grp1/
 
-There are three panels in the app. Each panel can perform a very straightforward function. Users can interact with the app by choosing the filter condition.
+It will take seconds to load the app. There are three panels in the app. Each panel can perform a very straightforward function. Users can interact with the app by choosing the filter condition.
 ![panel1](output/panel1.png)
 ![panel2](output/panel2.png)
 ![panel3](output/panel3.png)
