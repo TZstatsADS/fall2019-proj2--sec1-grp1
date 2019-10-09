@@ -12,6 +12,7 @@ mydata <- read.csv("combineddata.csv", stringsAsFactors = FALSE)
 #mydata <- fread("../data/combineddata.csv", stringsAsFactors = FALSE)
 mydata$health <- recode(mydata$health,"GOOD"="Good","POOR"="Poor", "FAIR"="Fair","DEAD"="Dead")
 
+
 data("zip.regions")
 valid_region <- zip.regions$region
 
@@ -35,7 +36,6 @@ shinyServer(function(input, output, session) {
   })
   
   
-  
   output$map <- renderLeaflet({
     df_1 <- dfInput()
     #NYCzip <- readOGR("../data/ZIP_CODE_040114.shp", verbose = FALSE)
@@ -49,7 +49,7 @@ shinyServer(function(input, output, session) {
     rownames(subdat_data) <- subdat.rownames
     subdat <- SpatialPolygonsDataFrame(subdat, data=subdat_data)
     
-    pal1 <- colorNumeric(palette = "Reds", domain = subdat$value)
+    pal1 <- colorNumeric(palette = "Greens", domain = subdat$value)
     
     popup1 = paste0('</strong>ZIP:<strong>', subdat$ZIPCODE, '<br></strong>Count:<strong>', subdat$value)
     
@@ -82,10 +82,8 @@ shinyServer(function(input, output, session) {
                 pal = pal1,
                 values = ~value,
                 opacity = 0.6,
-                title = "Value"
+                title = "Count"
       )
-    
-    
   })
   
   observeEvent(input$map1_shape_click, {
@@ -121,17 +119,20 @@ shinyServer(function(input, output, session) {
       specieswant <- numberoftrees$Var1[1:12]
       interactivedata <-  mydata[mydata$spc_common %in% specieswant,]
       
-      
+      interactivedata$health <- factor(interactivedata$health, levels = c("Dead", "Poor", "Fair", "Good"))
       plot1<- ggplot(interactivedata, aes(x=reorder(spc_common,spc_common,function(x)length(x)))) + 
         geom_bar(aes(y=(..count..), fill = health)) + 
-        scale_fill_brewer("Health Status")+
+        scale_fill_brewer("Health Status", palette="BrBG")+
         labs(title="TOP 12 Species Count ", x="Species", y = "Count") +
         theme_light()+
         theme(plot.title = element_text(size=30, face="bold", hjust = 0.5),
-              axis.text=element_text(size=16),
+              axis.text.y=element_text(size=10),
+              axis.text.x = element_text(size=16),
               axis.title=element_text(size=20)) + 
         coord_flip()+ 
         scale_y_continuous(name="Count", labels = scales::comma)
+      
+      
       
       plot2<- ggplot(interactivedata, aes(x=tree_dbh)) + 
         geom_density(data = data, aes(fill="Overall"), alpha = 0.5) + 
@@ -173,14 +174,15 @@ shinyServer(function(input, output, session) {
           plot.title=element_text(size=30, face="bold",hjust=0.5)
         )
       
+      df_3$health <- factor(df_3$health, levels = c("Dead", "Poor", "Fair", "Good"))
       ggplot(df_3, aes(x=factor(1), fill=health))+
-        geom_bar(width = 1)+ 
-        scale_fill_brewer("Health Status")+
+        geom_bar(width = 1, size = 1, color = "white")+ 
+        scale_fill_brewer("Health Status", palette="BrBG")+
         coord_polar("y")+ 
-        labs(title = "Health Pie Chart")+
+        labs(title = "Health Status of Trees")+
         blank_theme+  
-        theme(axis.text.x=element_blank())
-      
+        theme(axis.text.x=element_blank(), legend.title = element_text(size=15),
+              legend.text = element_text(size=15)) 
       
     })
     

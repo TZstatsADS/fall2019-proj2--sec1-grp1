@@ -27,11 +27,11 @@ shinyUI(
                          
                          h3("Conditions"),
                          
-                         selectInput("healthp", label = h3("Health Problem"),
+                         selectInput("healthp", label = h4("Health Problem"),
                                      choices = list("Good", "Fair","Poor", "Dead"),
                                      selected = "GOOD"),
-                         
-                         sliderInput("diameter", label = h3("Diameter"), min = 0, max = 50, value = c(0,50)
+
+                         sliderInput("diameter", label = h4("Diameter"), min = 0, max = 50, value = c(0,50)
                          )
                          
                          
