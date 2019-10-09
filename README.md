@@ -1,23 +1,19 @@
-# Project 2: Shiny App Development Version 2.0
+# Project 2: NYC Trees 
++ Shiny App Development Version 2.0
++ Term: Fall 2019
++ Team sec1-grp1
+
 
 ### [Project Description](doc/project2_desc.md)
 
 The app can be accessed through this link: https://kaiyanzheng.shinyapps.io/Proj2-sec1-grp1/
 
+There are three panels in the app. Each panel can perform a very straightforward function. Users can interact with the app by choosing the filter condition.
+![panel1](output/panel1.png)
+![panel2](output/panel2.png)
+![panel3](output/panel3.png)
 
-
-![screenshot](output/panel1.png)
-![screenshot](output/panel2.png)
-![screenshot](output/panel3.png)
-
-
-In this second project of GR5243 Applied Data Science, we develop a version 2.0 of an *Exploratory Data Analysis and Visualization* shiny app on a topic of your choice using [NYC Open Data](https://opendata.cityofnewyork.us/) or 
-
-## Project Title: NYC Trees
-Term: Fall 2019
-
-+ Team sec1-grp1
-+ **NYC Trees**: 
++ **Group Menbers*: 
 	+ Ponkshe, Tushar tvp2110@columbia.edu
 	+ Qiu, Feng fq2150@columbia.edu
 	+ Wu, Bingquan bw2585@columbia.edu
